@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeMind - Painel Gestor</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#f5f7fa}.header{background:#2c3e50;color:white;padding:15px 30px;display:flex;justify-content:space-between;align-items:center}.header h1{font-size:24px}.logout-btn{background:#e74c3c;color:white;border:none;padding:8px 20px;border-radius:5px;cursor:pointer;font-weight:600}.login-container{display:flex;justify-content:center;align-items:center;min-height:calc(100vh - 60px)}.login-box{background:white;padding:40px;border-radius:10px;box-shadow:0 5px 20px rgba(0,0,0,0.1);width:100%;max-width:400px}.login-box h2{text-align:center;margin-bottom:30px;color:#2c3e50}.login-box input{width:100%;padding:12px;margin-bottom:15px;border:2px solid #e0e0e0;border-radius:5px;font-size:15px}.login-box button{width:100%;padding:12px;background:#667eea;color:white;border:none;border-radius:5px;font-size:16px;font-weight:600;cursor:pointer}.dashboard{display:none;padding:30px;max-width:1600px;margin:0 auto}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-bottom:30px}.stat-card{background:white;padding:25px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.08);text-align:center}.stat-card h3{font-size:32px;margin-bottom:5px;color:#2c3e50}.stat-card p{color:#7f8c8d;font-size:14px}.filters{background:white;padding:20px;border-radius:10px;margin-bottom:20px;display:flex;gap:15px;flex-wrap:wrap;align-items:center}.filters select,.filters input{padding:10px;border:2px solid #e0e0e0;border-radius:5px;font-size:14px}.export-btn{margin-left:auto;background:#27ae60;color:white;border:none;padding:10px 20px;border-radius:5px;cursor:pointer;font-weight:600}.table-container{background:white;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.08);overflow-x:auto}table{width:100%;border-collapse:collapse}th{background:#34495e;color:white;padding:12px 8px;text-align:left;font-size:12px;white-space:nowrap}td{padding:12px 8px;border-bottom:1px solid #ecf0f1;font-size:12px}.status-badge{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}.status-ok{background:#d4edda;color:#155724}.status-atencao{background:#fff3cd;color:#856404}.status-risco{background:#f8d7da;color:#721c24}.delete-btn{background:#e74c3c;color:white;border:none;padding:5px 10px;border-radius:3px;cursor:pointer;font-size:11px}.alert-box{background:#fff3cd;border-left:4px solid #ffc107;padding:15px;margin-bottom:20px;border-radius:5px}.alert-box h3{color:#856404;margin-bottom:5px}.alert-box.risco{background:#f8d7da;border-left:4px solid #e74c3c}.alert-box.risco h3{color:#721c24}
+    </style>
+</head>
+<body>
+    <div class="header"><h1>SafeMind Gestor | Administrador</h1><button class="logout-btn" id="logoutBtn" style="display:none">Sair</button></div>
+    <div class="login-container" id="loginContainer">
+        <div class="login-box"><h2>Login Gestor</h2><input type="text" id="username" placeholder="Usuário"><input type="password" id="password" placeholder="Senha"><button id="loginBtn">Entrar</button><p id="loginError" style="color:#e74c3c;text-align:center;margin-top:15px;display:none">Usuário ou senha inválidos</p></div>
+    </div>
+    <div class="dashboard" id="dashboard">
+        <div class="stats">
+            <div class="stat-card"><h3 id="totalCheckins">0</h3><p>Total Check-ins</p></div>
+            <div class="stat-card"><h3 id="totalAptos">0</h3><p>Aptos</p></div>
+            <div class="stat-card"><h3 id="totalAtencao">0</h3><p>Atenção</p></div>
+            <div class="stat-card"><h3 id="totalRisco">0</h3><p>Risco Alto</p></div>
+        </div>
+        <div class="alert-box" id="alertBox"><h3>Alertas Críticos</h3><p id="alertasCriticos">Nenhum alerta crítico</p></div>
+        <div class="filters">
+            <select id="filtroFabrica"><option value="">Todas Fábricas</option><option value="RT1">RT1</option><option value="RT2">RT2</option><option value="RT3">RT3</option><option value="Fábrica de Pó">Fábrica de Pó</option><option value="Fábrica de Líquidos">Fábrica de Líquidos</option></select>
+            <select id="filtroArea"><option value="">Todas Áreas</option><option value="Utilidades">Utilidades</option><option value="Logística">Logística</option><option value="Produção">Produção</option><option value="Manutenção">Manutenção</option><option value="Qualidade">Qualidade</option></select>
+            <select id="filtroTurno"><option value="">Todos Turnos</option><option value="1º Turno">1º Turno</option><option value="2º Turno">2º Turno</option><option value="3º Turno">3º Turno</option><option value="Administrativo">Administrativo</option></select>
+            <select id="filtroStatus"><option value="">Todos Status</option><option value="ok">OK</option><option value="atencao">Atenção</option><option value="risco">Risco Alto</option></select>
+            <input type="date" id="filtroData">
+            <button class="export-btn" id="exportBtn">Exportar CSV</button>
+        </div>
+        <div class="table-container">
+            <table><thead><tr><th>Nome</th><th>Fábrica</th><th>Área</th><th>Turno</th><th>Humor</th><th>Status</th><th>Sintomas</th><th>Observações</th><th>Data</th><th>Hora</th><th>Ação</th></tr></thead><tbody id="tabelaCheckins"></tbody></table>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, onValue, remove } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+        const firebaseConfig = {apiKey:"AIzaSyBvhBQRLFoc-Q9ns2xoedD1EE7GCwpbY9k",authDomain:"safemind-fabrica.firebaseapp.com",databaseURL:"https://safemind-fabrica-default-rtdb.firebaseio.com",projectId:"safemind-fabrica",storageBucket:"safemind-fabrica.firebasestorage.app",messagingSenderId:"234129021769",appId:"1:234129021769:web:2113965e72e15763349898",measurementId:"G-N02KRPWV72"};
+        const app = initializeApp(firebaseConfig);const database = getDatabase(app);
+
+        const usuarios = {
+            "admin": {senha: "admin123", area: "todas", turno: "todos", nome: "Administrador"},
+            "manutencao.1t": {senha: "man1t", area: "Manutenção", turno: "1º Turno", nome: "Sup. Manutenção 1ºT"},
+            "manutencao.2t": {senha: "man2t", area: "Manutenção", turno: "2º Turno", nome: "Sup. Manutenção 2ºT"},
+            "manutencao.3t": {senha: "man3t", area: "Manutenção", turno: "3º Turno", nome: "Sup. Manutenção 3ºT"},
+            "producao.1t": {senha: "prod1t", area: "Produção", turno: "1º Turno", nome: "Sup. Produção 1ºT"},
+            "producao.2t": {senha: "prod2t", area: "Produção", turno: "2º Turno", nome: "Sup. Produção 2ºT"},
+            "producao.3t": {senha: "prod3t", area: "Produção", turno: "3º Turno", nome: "Sup. Produção 3ºT"},
+            "logistica.1t": {senha: "log1t", area: "Logística", turno: "1º Turno", nome: "Sup. Logística 1ºT"},
+            "logistica.2t": {senha: "log2t", area: "Logística", turno: "2º Turno", nome: "Sup. Logística 2ºT"},
+            "logistica.3t": {senha: "log3t", area: "Logística", turno: "3º Turno", nome: "Sup. Logística 3ºT"},
+            "utilidades.1t": {senha: "uti1t", area: "Utilidades", turno: "1º Turno", nome: "Sup. Utilidades 1ºT"},
+            "utilidades.2t": {senha: "uti2t", area: "Utilidades", turno: "2º Turno", nome: "Sup. Utilidades 2ºT"},
+            "utilidades.3t": {senha: "uti3t", area: "Utilidades", turno: "3º Turno", nome: "Sup. Utilidades 3ºT"},
+            "qualidade.1t": {senha: "qual1t", area: "Qualidade", turno: "1º Turno", nome: "Sup. Qualidade 1ºT"},
+            "qualidade.2t": {senha: "qual2t", area: "Qualidade", turno: "2º Turno", nome: "Sup. Qualidade 2ºT"},
+            "qualidade.3t": {senha: "qual3t", area: "Qualidade", turno: "3º Turno", nome: "Sup. Qualidade 3ºT"},
+        };
+
+        let usuarioLogado = null;
+
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            document.getElementById('loginError').style.display = 'none';
+
+            // LINHA CORRIGIDA DE VERDADE AGORA 👇
+            if(usuarios[user] && usuarios[user].senha === pass){
+                usuarioLogado = usuarios[user]; // LINHA CORRIGIDA DE VERDADE 👇
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                document.getElementById('logoutBtn').style.display = 'block';
+                document.querySelector('.header h1').textContent = `SafeMind | ${usuarioLogado.nome}`;
+
+                if(usuarioLogado.area!== "todas"){
+                    document.getElementById('filtroArea').value = usuarioLogado.area;
+                    document.getElementById('filtroArea').disabled = true;
+                }
+                if(usuarioLogado.turno!== "todos"){
+                    document.getElementById('filtroTurno').value = usuarioLogado.turno;
+                    document.getElementById('filtroTurno').disabled = true;
+                }
+
+                carregarDados();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {location.reload();});
+
+        let todosCheckins = [];
+
+        function carregarDados(){
+            const checkinsRef = ref(database, 'checkins');
+            onValue(checkinsRef, (snapshot) => {
+                todosCheckins = [];
+                snapshot.forEach((child) => {
+                    todosCheckins.push({id: child.key,...child.val()});
+                });
+                atualizarTabela();
+            });
+        }
+
+        function calcularStatus(checkin){
+            const humorRuim = ['mal', 'nao_muito_bem'].includes(checkin.humor);
+            const temSintoma = checkin.sintomas &&!checkin.sintomas.includes('Nenhum') && checkin.sintomas.length > 0;
+            const naoSeguro = checkin.condicaoSegura === 'nao';
+            if(naoSeguro || (humorRuim && temSintoma)) return 'risco';
+            if(humorRuim || temSintoma) return 'atencao';
+            return 'ok';
+        }
+
+        function formatarHora(timestamp){
+            if(!timestamp) return '-';
+            const data = new Date(timestamp);
+            return data.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+        }
+
+        function formatarData(timestamp){
+            if(!timestamp) return '-';
+            const data = new Date(timestamp);
+            return data.toLocaleDateString('pt-BR');
+        }
+
+        function atualizarTabela(){
+            const fabrica = document.getElementById('filtroFabrica').value;
+            const area = document.getElementById('filtroArea').value;
+            const turno = document.getElementById('filtroTurno').value;
+            const status = document.getElementById('filtroStatus').value;
+            const dataFiltro = document.getElementById('filtroData').value;
+
+            let filtrados = todosCheckins.filter(c => {
+                if(usuarioLogado.area!== "todas" && c.area!== usuarioLogado.area) return false;
+                if(usuarioLogado.turno!== "todos" && c.turno!== usuarioLogado.turno) return false;
+                if(fabrica && c.fabrica!== fabrica) return false;
+                if(area && c.area!== area) return false;
+                if(turno && c.turno!== turno) return false;
+                if(status && calcularStatus(c)!== status) return false;
+                if(dataFiltro){
+                    const dataCheckin = new Date(c.timestamp).toISOString().split('T')[0];
+                    if(dataCheckin!== dataFiltro) return false;
+                }
+                return true;
+            });
+
+            const contagem = {ok: 0, atencao: 0, risco: 0};
+            filtrados.forEach(c => {contagem[calcularStatus(c)]++;});
+
+            document.getElementById('totalCheckins').textContent = filtrados.length;
+            document.getElementById('totalAptos').textContent = contagem.ok;
+            document.getElementById('totalAtencao').textContent = contagem.atencao;
+            document.getElementById('totalRisco').textContent = contagem.risco;
+
+            const criticos = filtrados.filter(c => calcularStatus(c) === 'risco');
+            const alertBox = document.getElementById('alertBox');
+            if(criticos.length > 0){
+                alertBox.classList.add('risco');
+                document.getElementById('alertasCriticos').textContent = `${criticos.length} colaborador(es) em Risco Alto - Atenção imediata!`;
+            } else {
+                alertBox.classList.remove('risco');
+                document.getElementById('alertasCriticos').textContent = 'Nenhum alerta crítico';
+            }
+
+            const tbody = document.getElementById('tabelaCheckins');
+            tbody.innerHTML = '';
+            filtrados.reverse().forEach(c => {
+                const status = calcularStatus(c);
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${c.nome}</td>
+                    <td>${c.fabrica}</td>
+                    <td>${c.area}</td>
+                    <td>${c.turno || '-'}</td>
+                    <td>${c.humor}</td>
+                    <td><span class="status-badge status-${status}">${status.toUpperCase()}</span></td>
+                    <td>${c.sintomas? c.sintomas.join(', ') : 'Nenhum'}</td>
+                    <td>${c.observacoes || '-'}</td>
+                    <td>${formatarData(c.timestamp)}</td>
+                    <td>${formatarHora(c.timestamp)}</td>
+                    <td><button class="delete-btn" onclick="deletarCheckin('${c.id}')">🗑️</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.deletarCheckin = async (id) => {
+            if(usuarioLogado.area!== "todas"){
+                alert('Apenas administrador pode deletar registros.');
+                return;
+            }
+            if(confirm('Deletar este check-in do histórico?')){
+                await remove(ref(database, 'checkins/' + id));
+            }
+        };
+
+        document.getElementById('filtroFabrica').addEventListener('change', atualizarTabela);
+        document.getElementById('filtroArea').addEventListener('change', atualizarTabela);
+        document.getElementById('filtroTurno').addEventListener('change', atualizarTabela);
+        document.getElementById('filtroStatus').addEventListener('change', atualizarTabela);
+        document.getElementById('filtroData').addEventListener('change', atualizarTabela);
+
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            let csv = 'Nome,Fábrica,Área,Turno,Humor,Status,Sintomas,Observações,Data,Hora\n';
+            todosCheckins.filter(c => {
+                if(usuarioLogado.area!== "todas" && c.area!== usuarioLogado.area) return false;
+                if(usuarioLogado.turno!== "todos" && c.turno!== usuarioLogado.turno) return false;
+                return true;
+            }).forEach(c => {
+                csv += `"${c.nome}","${c.fabrica}","${c.area}","${c.turno || '-'}","${c.humor}","${calcularStatus(c)}","${c.sintomas?.join('; ') || 'Nenhum'}","${c.observacoes || '-'}","${formatarData(c.timestamp)}","${formatarHora(c.timestamp)}"\n`;
+            });
+            const blob = new Blob([csv], {type: 'text/csv'});
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `safemind_${usuarioLogado.area}_${usuarioLogado.turno}_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+        });
+    </script>
+</body>
+</html>

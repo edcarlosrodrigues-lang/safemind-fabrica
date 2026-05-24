@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeMind - Check-in Diário</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2c3e50">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3063/3063822.png">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px}.container{background:white;border-radius:15px;padding:30px;width:100%;max-width:500px;box-shadow:0 10px 40px rgba(0,0,0,0.2)}h1{color:#2c3e50;text-align:center;margin-bottom:5px}p.subtitle{text-align:center;color:#7f8c8d;margin-bottom:25px;font-size:14px}.form-group{margin-bottom:20px}label{display:block;margin-bottom:8px;color:#34495e;font-weight:600;font-size:14px}input,select,textarea{width:100%;padding:12px;border:2px solid #e0e0e0;border-radius:8px;font-size:15px;transition:0.3s}input:focus,select:focus,textarea:focus{border-color:#667eea;outline:none}.humor-options{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.humor-btn{padding:15px;border:2px solid #e0e0e0;border-radius:8px;background:white;cursor:pointer;text-align:center;transition:0.3s;font-size:14px}.humor-btn input{display:none}.humor-btn.selected{border-color:#667eea;background:#f0f4ff}.sintomas-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.checkbox-item{display:flex;align-items:center;padding:8px;background:#f8f9fa;border-radius:5px;font-size:13px}.checkbox-item input{width:auto;margin-right:8px}button{width:100%;padding:15px;background:#667eea;color:white;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;transition:0.3s}button:hover{background:#5568d3}button:disabled{background:#bdc3c7;cursor:not-allowed}.success{display:none;text-align:center;padding:40px}.success h2{color:#27ae60;margin-bottom:15px}.success p{color:#7f8c8d}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="formulario">
+            <h1>SafeMind Check-in</h1>
+            <p class="subtitle">Segurança começa com você</p>
+            <form id="checkinForm">
+                <div class="form-group">
+                    <label>Nome Completo *</label>
+                    <input type="text" id="nome" required placeholder="Digite seu nome">
+                </div>
+
+                <div class="form-group">
+                    <label>Fábrica *</label>
+                    <select id="fabrica" required>
+                        <option value="">Selecione</option>
+                        <option value="RT1">RT1</option>
+                        <option value="RT2">RT2</option>
+                        <option value="RT3">RT3</option>
+                        <option value="Fábrica de Pó">Fábrica de Pó</option>
+                        <option value="Fábrica de Líquidos">Fábrica de Líquidos</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Área *</label>
+                    <select id="area" required>
+                        <option value="">Selecione</option>
+                        <option value="Utilidades">Utilidades</option>
+                        <option value="Logística">Logística</option>
+                        <option value="Produção">Produção</option>
+                        <option value="Manutenção">Manutenção</option>
+                        <option value="Qualidade">Qualidade</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Seu Turno *</label>
+                    <select id="turno" required>
+                        <option value="">Selecione seu turno</option>
+                        <option value="1º Turno">1º Turno - 06h às 14h</option>
+                        <option value="2º Turno">2º Turno - 14h às 22h</option>
+                        <option value="3º Turno">3º Turno - 22h às 06h</option>
+                        <option value="Administrativo">Administrativo</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Como você está se sentindo hoje? *</label>
+                    <div class="humor-options">
+                        <label class="humor-btn">
+                            <input type="radio" name="humor" value="bem" required>
+                            <div>😊 Bem</div>
+                        </label>
+                        <label class="humor-btn">
+                            <input type="radio" name="humor" value="normal" required>
+                            <div>😐 Normal</div>
+                        </label>
+                        <label class="humor-btn">
+                            <input type="radio" name="humor" value="nao_muito_bem" required>
+                            <div>😟 Não muito bem</div>
+                        </label>
+                        <label class="humor-btn">
+                            <input type="radio" name="humor" value="mal" required>
+                            <div>😞 Mal</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Está com algum desses sintomas?</label>
+                    <div class="sintomas-grid">
+                        <label class="checkbox-item"><input type="checkbox" value="Dor de cabeça"> Dor de cabeça</label>
+                        <label class="checkbox-item"><input type="checkbox" value="Tontura"> Tontura</label>
+                        <label class="checkbox-item"><input type="checkbox" value="Náusea"> Náusea</label>
+                        <label class="checkbox-item"><input type="checkbox" value="Fadiga"> Fadiga/Cansaço</label>
+                        <label class="checkbox-item"><input type="checkbox" value="Dor muscular"> Dor muscular</label>
+                        <label class="checkbox-item"><input type="checkbox" value="Ansiedade"> Ansiedade</label>
+                        <label class="checkbox-item"><input type="checkbox" value="Sono"> Sono/Fadiga</label>
+                        <label class="checkbox-item"><input type="checkbox" value="Nenhum" id="nenhum"> Nenhum</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Você se sente em condições seguras para trabalhar hoje? *</label>
+                    <select id="condicaoSegura" required>
+                        <option value="">Selecione</option>
+                        <option value="sim">Sim, estou bem</option>
+                        <option value="nao">Não, preciso de atenção</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Observações</label>
+                    <textarea id="observacoes" rows="3" placeholder="Algo que queira informar ao seu gestor?"></textarea>
+                </div>
+
+                <button type="submit" id="submitBtn">Enviar Check-in</button>
+            </form>
+        </div>
+
+        <div class="success" id="sucesso">
+            <h2>✓ Check-in Realizado!</h2>
+            <p>Obrigado por cuidar da sua segurança.<br>Tenha um bom trabalho!</p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, push } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyBvhBQRLFoc-Q9ns2xoedD1EE7GCwpbY9k",
+            authDomain: "safemind-fabrica.firebaseapp.com",
+            databaseURL: "https://safemind-fabrica-default-rtdb.firebaseio.com",
+            projectId: "safemind-fabrica",
+            storageBucket: "safemind-fabrica.firebasestorage.app",
+            messagingSenderId: "234129021769",
+            appId: "1:234129021769:web:2113965e72e15763349898",
+            measurementId: "G-N02KRPWV72"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        document.querySelectorAll('.humor-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.humor-btn').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                this.querySelector('input').checked = true;
+            });
+        });
+
+        document.getElementById('nenhum').addEventListener('change', function() {
+            if(this.checked) {
+                document.querySelectorAll('.sintomas-grid input:not(#nenhum)').forEach(cb => cb.checked = false);
+            }
+        });
+
+        document.querySelectorAll('.sintomas-grid input:not(#nenhum)').forEach(cb => {
+            cb.addEventListener('change', function() {
+                if(this.checked) document.getElementById('nenhum').checked = false;
+            });
+        });
+
+        document.getElementById('checkinForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Enviando...';
+            
+            const sintomas = Array.from(document.querySelectorAll('.sintomas-grid input:checked')).map(cb => cb.value);
+            
+            const checkinData = {
+                nome: document.getElementById('nome').value,
+                fabrica: document.getElementById('fabrica').value,
+                area: document.getElementById('area').value,
+                turno: document.getElementById('turno').value,
+                humor: document.querySelector('input[name="humor"]:checked').value,
+                sintomas: sintomas.length? sintomas : ['Nenhum'],
+                condicaoSegura: document.getElementById('condicaoSegura').value,
+                observacoes: document.getElementById('observacoes').value,
+                timestamp: Date.now()
+            };
+            
+            try {
+                await push(ref(database, 'checkins'), checkinData);
+                document.getElementById('formulario').style.display = 'none';
+                document.getElementById('sucesso').style.display = 'block';
+            } catch (error) {
+                alert('Erro ao enviar. Tente novamente.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Enviar Check-in';
+            }
+        });
+    </script>
+</body>
+</html>
